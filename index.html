@@ -1,1 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plot Points</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+<style>
+  canvas {
+    border: 1px solid black;
+  }
+</style>
+</head>
+<body>
 
+<div>
+  <label for="pointsInput">Enter points:</label>
+  <textarea id="pointsInput" rows="10"></textarea>
+  <button onclick="plotPoints()">Plot Points</button>
+</div>
+
+<canvas id="myChart" width="800" height="400"></canvas>
+
+<script>
+function plotPoints() {
+  // Getting the input value and parsing JSON
+  const input = document.getElementById('pointsInput').value;
+  const data = JSON.parse(input);
+
+  // Extracting x and y values
+  const colorTransfer = data.colorTransfer;
+  const scalarOpacity = data.scalarOpacity;
+
+  const xValues = [];
+  const yValues = [];
+
+  // Extracting x values from colorTransfer
+  const colorTransferValues = colorTransfer.split(' ');
+  for (let i = 1; i < colorTransferValues.length; i += 4) {
+    const x = parseFloat(colorTransferValues[i]);
+    xValues.push(x);
+  }
+
+  // Extracting y values from scalarOpacity
+  const scalarOpacityValues = scalarOpacity.split(' ');
+  for (let i = 1; i < scalarOpacityValues.length; i += 2) {
+    const y = parseFloat(scalarOpacityValues[i+1]);
+    yValues.push(y);
+  }
+
+  // Plotting the points using Chart.js
+  const ctx = document.getElementById('myChart').getContext('2d');
+  const myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: xValues,
+      datasets: [{
+        label: 'Points',
+        data: yValues,
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
+        fill: false
+      }]
+    },
+    options: {
+      scales: {
+        xAxes: [{
+          scaleLabel: {
+            display: true,
+            labelString: 'X Values'
+          }
+        }],
+        yAxes: [{
+          scaleLabel: {
+            display: true,
+            labelString: 'Y Values'
+          }
+        }]
+      }
+    }
+  });
+}
+</script>
+
+</body>
+</html>
